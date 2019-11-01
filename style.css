@@ -1,0 +1,58 @@
+html {
+    font-size: 11px;
+}
+
+table {
+    width: 100%;
+    overflow-x: auto;
+    display: block;
+}
+
+div {
+    max-width: 100%;
+    text-align: center;
+}
+
+th {
+    text-align: left;
+}
+
+img { 
+    max-width: 25%; 
+    height: auto; 
+}
+
+button {
+    margin: 4px;
+}
+
+#code-block {
+    background-color: #eee;
+    border: 1px solid #999;
+    display: block;
+    padding: 20px;
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+#statusMessage {
+    position: relative;
+    top: 40px;
+}
+
+.textLeft {
+    text-align: left;
+}
+
+.buttonGroup {
+    position: relative;
+    top: 20px;
+}
+
+.hidden {
+    display: none;
+}
+
