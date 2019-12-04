@@ -1,189 +1,136 @@
-<!DOCTYPE HTML>
+﻿<!DOCTYPE html>
 <html>
-
 <head>
-    <title>Catatan Harianku</title>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<title>New project</title>
+	
+	<!-- Standardised web app manifest -->
+	<link rel="manifest" href="appmanifest.json" />
+	
+	<!-- Allow fullscreen mode on iOS devices. (These are Apple specific meta tags.) -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+	<link rel="apple-touch-icon" sizes="256x256" href="icon-256.png" />
+	<meta name="HandheldFriendly" content="true" />
+	
+	<!-- Chrome for Android web app tags -->
+	<meta name="mobile-web-app-capable" content="yes" />
+	<link rel="shortcut icon" sizes="256x256" href="icon-256.png" />
 
-    <style>
-        .table>thead>tr>th {
-            padding: 60px;
-        }
+    <!-- All margins and padding must be zero for the canvas to fill the screen. -->
+	<style type="text/css">
+		* {
+			padding: 0;
+			margin: 0;
+		}
+		html, body {
+			background: #000;
+			color: #fff;
+			overflow: hidden;
+			touch-action: none;
+			-ms-touch-action: none;
+		}
+		canvas {
+			touch-action-delay: none;
+			touch-action: none;
+			-ms-touch-action: none;
+		}
     </style>
+	
+
+</head> 
+ 
+<body> 
+	<div id="fb-root"></div>
+	
+	<script>
+	// Issue a warning if trying to preview an exported project on disk.
+	(function(){
+		// Check for running exported on file protocol
+		if (window.location.protocol.substr(0, 4) === "file")
+		{
+			alert("Exported games won't work until you upload them. (When running on the file:/// protocol, browsers block many features from working for security reasons.)");
+		}
+	})();
+	</script>
+	
+	<!-- The canvas must be inside a div called c2canvasdiv -->
+	<div id="c2canvasdiv">
+	
+		<!-- The canvas the project will render to.  If you change its ID, don't forget to change the
+		ID the runtime looks for in the jQuery events above (ready() and cr_sizeCanvas()). -->
+		<canvas id="c2canvas" width="480" height="640">
+			<!-- This text is displayed if the visitor's browser does not support HTML5.
+			You can change it, but it is a good idea to link to a description of a browser
+			and provide some links to download some popular HTML5-compatible browsers. -->
+			<h1>Your browser does not appear to support HTML5.  Try upgrading your browser to the latest version.  <a href="http://www.whatbrowser.org">What is a browser?</a>
+			<br/><br/><a href="http://www.microsoft.com/windows/internet-explorer/default.aspx">Microsoft Internet Explorer</a><br/>
+			<a href="http://www.mozilla.com/firefox/">Mozilla Firefox</a><br/>
+			<a href="http://www.google.com/chrome/">Google Chrome</a><br/>
+			<a href="http://www.apple.com/safari/download/">Apple Safari</a></h1>
+		</canvas>
+		
+	</div>
+	
+	<!-- Pages load faster with scripts at the bottom -->
+	
+	<!-- Construct 2 exported games require jQuery. -->
+	<script src="jquery-2.1.1.min.js"></script>
 
 
-</head>
+	
+    <!-- The runtime script.  You can rename it, but don't forget to rename the reference here as well.
+    This file will have been minified and obfuscated if you enabled "Minify script" during export. -->
+	<script src="c2runtime.js"></script>
 
-<body onload="loadCatatan();">
-
-    <div class="col-xs-12 col-md-8 col-md-offset-2" ng-controller="listContactCtrl">
-        <div class="page-header">
-            <h1 align="center">
-                Catatan Harianku
-            </h1>
-            <ul class="nav nav-pills">
-                <li><a id="nav-list-catatan" href="javascript:void(0);" onclick="gantiMenu('list-catatan');">List Catatan</a></li>
-                <li><a id="nav-tambah-catatan" href="javascript:void(0);" onclick="gantiMenu('tambah-catatan');">Tambah Catatan</a></li>
-            </ul>
-
-        </div>
-        <div id="tambah-catatan" class="well" style="display:none;">
-            <form id="form-data">
-                <div id="nama-group" class="form-group">
-                    <label>Nama:</label>
-                    <input type="text" class="form-control" id="nama" name="nama">
-                </div>
-                <div id="tanggal-group" class="form-group">
-                    <label>Tanggal:</label>
-                    <input type="text" class="form-control" id="tanggal" name="tanggal">
-                </div>
-                <div id="agenda-group" class="form-group">
-                    <label>Agenda:</label>
-                    <textarea class="form-control" id="agenda" name="agenda"></textarea><br />
-                </div>
-                <input type="button" value="Simpan" onclick="simpanData();" class="btn btn-success btn-small" />
-                <input type="reset" value="Reset" onclick="" class="btn btn-warning btn-small" />
-            </form>
-        </div>
-
-        <div id="edit-data" class="well" style="display:none;">
-            <form id="eform-data">
-
-                <div id="nama-group" class="form-group" style="display:none;">
-                    <label>id data:</label>
-                    <input type="text" class="form-control" id="eid_data" name="nama">
-                </div>
-
-                <div id="nama-group" class="form-group">
-                    <label>Nama:</label>
-                    <input type="text" class="form-control" id="enama" name="nama">
-                </div>
-                <div id="tanggal-group" class="form-group">
-                    <label>Tanggal:</label>
-                    <input type="text" class="form-control" id="etanggal" name="tanggal">
-                </div>
-                <div id="agenda-group" class="form-group">
-                    <label>Agenda:</label>
-                    <textarea class="form-control" id="eagenda" name="agenda"></textarea><br />
-                </div>
-                <input type="button" value="Simpan" onclick="simpanEditData();" class="btn btn-success btn-small" />
-                <input type="reset" value="Reset" onclick="" class="btn btn-warning btn-small" />
-                <input type="button" value="Cancel" onclick="gantiMenu('list-catatan');"
-                    class="btn btn-warning btn-small" />
-            </form>
-        </div>
-
-        <div id="lihat-data" class="well" style="display:none;">
-            <form id="eform-data">
-
-                <div id="nama-group" class="form-group" style="display:none;">
-                    <label for="disabled">id data:</label>
-                    <input type="text" class="form-control" id="lid_data" name="nama" disabled>
-                </div>
-
-                <div id="nama-group" class="form-group">
-                    <label for="disabled">Nama:</label>
-                    <input type="text" class="form-control" id="lnama" name="nama" disabled>
-                </div>
-                <div id="tanggal-group" class="form-group">
-                    <label for="disabled">Tanggal:</label>
-                    <input type="text" class="form-control" id="ltanggal" name="tanggal" disabled>
-                </div>
-                <div id="agenda-group" class="form-group">
-                    <label for="disabled">Agenda:</label>
-                    <textarea class="form-control" id="lagenda" name="agenda" disabled></textarea>
-                </div>
-                <input type="button" value="Kembali" onclick="gantiMenu('list-catatan');"
-                    class="btn btn-warning btn-small" />
-            </form>
-        </div>
-
-
-        <div id="list-catatan" class="well">
-            Pilih menu List Catatan untuk melihat catatan yang sudah dibuat.
-        </div>
-
-        <!--Konten LIFF v2-->
-
-        <div id="liffAppContent">
-            <!-- ACTION BUTTONS -->
-            <div class="buttonGroup">
-                <div class="buttonRow">
-                    <button id="openWindowButton" class="btn btn-success btn-small">Open External Window</button>
-                    <button id="closeWindowButton" class="btn btn-danger btn-small">Close LIFF App</button>
-                    <button id="sendMessageButton" class="btn btn-warning btn-small">Send Message</button>
-                </div>
-
-            </div>
-
-            <!-- LIFF DATA -->
-            <div id="liffData">
-                <h3 id="liffDataHeader" class="textLeft">Informasi:</h3>
-                <table>
-                    <tr>
-                        <th>isInClient : </th>
-                        <td id="isInClient" class="textLeft"></td>
-                    </tr>
-                    <tr>
-                        <th>isLoggedIn : </th>
-                        <td id="isLoggedIn" class="textLeft"></td>
-                    </tr>
-                </table>
-            </div>
-            <!-- LOGIN LOGOUT BUTTONS -->
-            <div class="buttonGroup">
-                <button id="liffLoginButton" class="btn btn-success btn-small">Log in</button>
-                <button id="liffLogoutButton" class="btn btn-warning btn-small">Log out</button>
-            </div>
-            <div id="statusMessage">
-                <div id="isInClientMessage"></div>
-                <div id="apiReferenceMessage">
-                    <p>Available LIFF methods vary depending on the browser you use to open the LIFF app.</p>
-                    <p>Please refer to the <a
-                            href="https://developers.line.biz/en/reference/liff/#initialize-liff-app">API reference
-                            page</a> for more information.</p>
-                </div>
-            </div>
-        </div>
-        <!-- LIFF ID ERROR -->
-        <div id="liffIdErrorMessage" class="hidden">
-            <p>You have not assigned any value for LIFF ID.</p>
-            <p>If you are running the app using Node.js, please set the LIFF ID as an environment variable in your
-                Heroku account follwing the below steps: </p>
-            <code id="code-block">
-                <ol>
-                    <li>Go to `Dashboard` in your Heroku account.</li>
-                    <li>Click on the app you just created.</li>
-                    <li>Click on `Settings` and toggle `Reveal Config Vars`.</li>
-                    <li>Set `MY_LIFF_ID` as the key and the LIFF ID as the value.</li>
-                    <li>Your app should be up and running. Enter the URL of your app in a web browser.</li>
-                </ol>
-            </code>
-            <p>If you are using any other platform, please add your LIFF ID in the <code>index.html</code> file.</p>
-            <p>For more information about how to add your LIFF ID, see <a
-                    href="https://developers.line.biz/en/reference/liff/#initialize-liff-app">Initializing the LIFF
-                    app</a>.</p>
-        </div>
-        <!-- LIFF INIT ERROR -->
-        <div id="liffInitErrorMessage" class="hidden">
-            <p>Something went wrong with LIFF initialization.</p>
-            <p>LIFF initialization can fail if a user clicks "Cancel" on the "Grant permission" screen, or if an error occurs in the process of <code>liff.init()</code>.
-        </div>
-        <!-- NODE.JS LIFF ID ERROR -->
-        <div id="nodeLiffIdErrorMessage" class="hidden">
-            <p>Unable to receive the LIFF ID as an environment variable.</p>
-        </div>
-
-    </div>
-</body>
-<!-- Integrasi LIFF SDK dan konfigurasi aplikasi catatan sederhana -->
-<script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
-<script src="catatan-config.js"></script>
-<script src="liff-starter.js"></script>
-
-</html>
+    <script>
+		// Start the Construct 2 project running on window load.
+		jQuery(document).ready(function ()
+		{			
+			// Create new runtime using the c2canvas
+			cr_createRuntime("c2canvas");
+		});
+		
+		// Pause and resume on page becoming visible/invisible
+		function onVisibilityChanged() {
+			if (document.hidden || document.mozHidden || document.webkitHidden || document.msHidden)
+				cr_setSuspended(true);
+			else
+				cr_setSuspended(false);
+		};
+		
+		document.addEventListener("visibilitychange", onVisibilityChanged, false);
+		document.addEventListener("mozvisibilitychange", onVisibilityChanged, false);
+		document.addEventListener("webkitvisibilitychange", onVisibilityChanged, false);
+		document.addEventListener("msvisibilitychange", onVisibilityChanged, false);
+		
+		function OnRegisterSWError(e)
+		{
+			console.warn("Failed to register service worker: ", e);
+		};
+		
+		// Runtime calls this global method when ready to start caching (i.e. after startup).
+		// This registers the service worker which caches resources for offline support.
+		window.C2_RegisterSW = function C2_RegisterSW()
+		{
+			if (!navigator.serviceWorker)
+				return;		// no SW support, ignore call
+			
+			try {
+				navigator.serviceWorker.register("sw.js", { scope: "./" })
+				.then(function (reg)
+				{
+					console.log("Registered service worker on " + reg.scope);
+				})
+				.catch(OnRegisterSWError);
+			}
+			catch (e)
+			{
+				OnRegisterSWError(e);
+			}
+		};
+    </script>
+</body> 
+</html> 
