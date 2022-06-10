@@ -1,30 +1,10 @@
-window.onload = function() {
-    const useNodeJS = false;   // if you are not using a node server, set this value to false
-    const defaultLiffId = "";   // change the default LIFF value if you are not using a node server
+import liff from '@line/liff';
 
-    // DO NOT CHANGE THIS
-    let myLiffId = "";
+function liffStarter() {
+    const defaultLiffId = import.meta.env.VITE_LIFF_ID;   // change the default LIFF value on [.env] file
 
-    // if node is used, fetch the environment variable and pass it to the LIFF method
-    // otherwise, pass defaultLiffId
-    if (useNodeJS) {
-        fetch('/send-id')
-            .then(function(reqResponse) {
-                return reqResponse.json();
-            })
-            .then(function(jsonResponse) {
-                myLiffId = jsonResponse.id;
-                initializeLiffOrDie(myLiffId);
-            })
-            .catch(function(error) {
-                document.getElementById("liffAppContent").classList.add('hidden');
-                document.getElementById("nodeLiffIdErrorMessage").classList.remove('hidden');
-            });
-    } else {
-        myLiffId = defaultLiffId;
-        initializeLiffOrDie(myLiffId);
-    }
-};
+    initializeLiffOrDie(defaultLiffId);
+}
 
 /**
 * Check if myLiffId is null. If null do not initiate liff.
@@ -40,7 +20,7 @@ function initializeLiffOrDie(myLiffId) {
 }
 
 /**
-* Initialize LIFF
+* Check if myLiffId is null. If null do not initiate liff.
 * @param {string} myLiffId The LIFF ID of the selected element
 */
 function initializeLiff(myLiffId) {
@@ -59,8 +39,8 @@ function initializeLiff(myLiffId) {
 }
 
 /**
- * Initialize the app by calling functions handling individual app components
- */
+* Initialize the app by calling functions handling individual app components
+*/
 function initializeApp() {
     displayLiffData();
     displayIsInClientInfo();
@@ -96,16 +76,14 @@ function displayIsInClientInfo() {
 }
 
 function registerButtonHandlers() {
-    // openWindow call
-    document.getElementById('openWindowButton').addEventListener('click', function() {
+    document.getElementById('openWindowButton').addEventListener('click', function () {
         liff.openWindow({
-            url: 'https://catatanliffv2.herokuapp.com/', // Isi dengan Endpoint URL aplikasi web Anda
+            url: 'https://example.netlify.app/', // Isi dengan Endpoint URL aplikasi web Anda
             external: true
         });
     });
 
-    // closeWindow call
-    document.getElementById('closeWindowButton').addEventListener('click', function() {
+    document.getElementById('closeWindowButton').addEventListener('click', function () {
         if (!liff.isInClient()) {
             sendAlertIfNotInClient();
         } else {
@@ -113,54 +91,39 @@ function registerButtonHandlers() {
         }
     });
 
-    // login call, only when external browser is used
-    document.getElementById('liffLoginButton').addEventListener('click', function() {
+    document.getElementById('liffLoginButton').addEventListener('click', function () {
         if (!liff.isLoggedIn()) {
-            liff.login();
+            liff.login({
+                redirectUri: "https://belajarubic-latihan-liff-2.netlify.app"
+            });
         }
     });
 
-    // logout call only when external browse
-    document.getElementById('liffLogoutButton').addEventListener('click', function() {
+    document.getElementById('liffLogoutButton').addEventListener('click', function () {
         if (liff.isLoggedIn()) {
             liff.logout();
             window.location.reload();
         }
     });
 
-    // sendMessages call
-    document.getElementById('sendMessageButton').addEventListener('click', function() {
+    document.getElementById('sendMessageButton').addEventListener('click', function () {
         if (!liff.isInClient()) {
             sendAlertIfNotInClient();
         } else {
             liff.sendMessages([{
                 'type': 'text',
                 'text': "Anda telah menggunakan fitur Send Message!"
-            }]).then(function() {
+            }]).then(function () {
                 window.alert('Ini adalah pesan dari fitur Send Message');
-            }).catch(function(error) {
+            }).catch(function (error) {
                 window.alert('Error sending message: ' + error);
             });
         }
     });
 }
 
-/**
-* Alert the user if LIFF is opened in an external browser and unavailable buttons are tapped
-*/
 function sendAlertIfNotInClient() {
     alert('This button is unavailable as LIFF is currently being opened in an external browser.');
 }
 
-/**
-* Toggle specified element
-* @param {string} elementId The ID of the selected element
-*/
-function toggleElement(elementId) {
-    const elem = document.getElementById(elementId);
-    if (elem.offsetWidth > 0 && elem.offsetHeight > 0) {
-        elem.style.display = 'none';
-    } else {
-        elem.style.display = 'block';
-    }
-}
+export { liffStarter, sendAlertIfNotInClient, };
